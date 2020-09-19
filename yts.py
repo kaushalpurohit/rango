@@ -21,6 +21,6 @@ choice = input("Enter choice:")
 url = obj.get_url(int(choice))
 response = requests.get(url)
 soup = BeautifulSoup(response.content, 'html5lib')
-results = soup.findAll('a',attrs = {'class' : 'lnk-lnk lnk-4','rel' : 'nofollow','href' : re.compile('http(.*)')})
+results = soup.findAll('a',attrs = {'class' : 'lnk-lnk','rel' : 'nofollow','href' : re.compile('https://yts(.*)')})
 for result in results:
-    print(results)
+    print(result.findAll('span',text = re.compile('[720][1080]*'))[0].text,result['href']+"\n")
