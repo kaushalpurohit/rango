@@ -9,6 +9,9 @@ from yts import search,quality
 from movies import movies
 import urllib
 import io
+import pathlib
+
+print(pathlib.Path(__file__).parent.absolute())
 
 TOKEN = "1250079555:AAGxMQFXbCTR7hQCFcc7uLXzCYMyvEiTCU8" # Bot token
 URL = "https://api.telegram.org/bot{}/".format(TOKEN)
