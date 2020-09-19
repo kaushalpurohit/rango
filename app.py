@@ -78,8 +78,8 @@ def echo_all(updates):
                     text = "You can download the torrent from the links below\n\n"
                     for link in href:
                         #text += "{}:{}\n\n".format(message[i],link)
-                        file = requests.get(link, stream=True)
-                        print(open('{}.torrent'.format(message[i]), 'wb').write(file.content))
+                        file = requests.get(link, stream=True,allow_redirects=True)
+                        open('/app/{}.torrent'.format(message[i]), 'wb').write(file.content)
                         send_file('@/app/{}.torrent'.format(message[i]),chat)
                         i += 1
                 #send_message(text,chat)
