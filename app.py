@@ -73,9 +73,12 @@ def echo_all(updates):
                 else:
                     text = "You can download the torrent from the links below\n\n"
                     for link in href:
-                        text += "{}:{}\n\n".format(message[i],link)
+                        #text += "{}:{}\n\n".format(message[i],link)
+                        file = requests.get(link, allow_redirects=True)
+                        open('{}.pdf'.format(message[i]), 'wb').write(file.content)
+                        send_file('{}'.format(message[i]),chat)
                         i += 1
-                send_message(text,chat)
+                #send_message(text,chat)
             else:
                 if text == "/start":
                     message = "Hi! I am the yts bot.\n"
