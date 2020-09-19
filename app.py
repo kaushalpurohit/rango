@@ -78,6 +78,7 @@ def echo_all(updates):
                         file = requests.get(link, allow_redirects=True)
                         f = io.BytesIO(file.content)
                         send_file(f,chat)
+                        print(f)
                         i += 1
                 #send_message(text,chat)
             else:
