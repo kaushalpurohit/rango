@@ -8,10 +8,7 @@ import time
 from yts import search,quality
 from movies import movies
 import urllib
-import io
-import pathlib
-
-print(pathlib.Path(__file__).parent.absolute())
+import tempfile
 
 TOKEN = "1250079555:AAGxMQFXbCTR7hQCFcc7uLXzCYMyvEiTCU8" # Bot token
 URL = "https://api.telegram.org/bot{}/".format(TOKEN)
@@ -79,10 +76,11 @@ def echo_all(updates):
                     for link in href:
                         #text += "{}:{}\n\n".format(message[i],link)
                         file = requests.get(link, stream=True,allow_redirects=True)
-                        f = open('/tmp/{}.torrent'.format(message[i]), 'wb')
+                        f = tempfile.NamedTemporaryFile()
+                        f.name('tmp/{}.torrent'.format(message[i]))
                         print(f.write(file.content))
-                        f.close()
                         send_file('@/tmp/{}.torrent'.format(message[i]),chat)
+                        f.close()
                         i += 1
                 #send_message(text,chat)
             else:
