@@ -8,6 +8,7 @@ import time
 from yts import search,quality
 from movies import movies
 import urllib
+import io
 
 TOKEN = "1250079555:AAGxMQFXbCTR7hQCFcc7uLXzCYMyvEiTCU8" # Bot token
 URL = "https://api.telegram.org/bot{}/".format(TOKEN)
@@ -75,8 +76,8 @@ def echo_all(updates):
                     for link in href:
                         #text += "{}:{}\n\n".format(message[i],link)
                         file = requests.get(link, allow_redirects=True)
-                        open('{}.pdf'.format(message[i]), 'wb').write(file.content)
-                        send_file('{}'.format(message[i]),chat)
+                        f = io.BytesIO(file.content)
+                        send_file(f,chat)
                         i += 1
                 #send_message(text,chat)
             else:
