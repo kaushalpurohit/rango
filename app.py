@@ -74,15 +74,8 @@ def echo_all(updates):
                 else:
                     text = "You can download the torrent from the links below\n\n"
                     for link in href:
-                        #text += "{}:{}\n\n".format(message[i],link)
-                        file = requests.get(link, stream=True,allow_redirects=True)
-                        f = tempfile.NamedTemporaryFile()
-                        f.name('tmp/{}.torrent'.format(message[i]))
-                        print(f.write(file.content))
-                        send_file('@/tmp/{}.torrent'.format(message[i]),chat)
-                        f.close()
-                        i += 1
-                #send_message(text,chat)
+                        text += "{}:{}\n\n".format(message[i],link)
+                send_message(text,chat)
             else:
                 if text == "/start":
                     message = "Hi! I am the yts bot.\n"
