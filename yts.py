@@ -30,12 +30,10 @@ def quality(choice,obj):
     #print(url)
     response = requests.get(url)
     soup = BeautifulSoup(response.content, 'html5lib')
-    results = soup.findAll('a',attrs = {'class' : 'lnk-lnk','rel' : 'nofollow'})
+    results = soup.findAll('a',attrs = {'class' : 'lnk-lnk','rel' : 'nofollow','href' : re.compile('https://yts(.*)')})
     href = []
     message = []
     for result in results:
         href.append(result['href'])
         message.append(result.findAll('span',attrs = {'class' : 'lnk lnk-dl'},text = re.compile('([720][1080])*'))[0].text)
     return href,message
-
-    

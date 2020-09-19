@@ -25,7 +25,7 @@ def get_json_from_url(url):
 
 def get_updates(offset=None):
 
-    url = URL + "getUpdates?timeout=100"
+    url = URL + "getUpdates?timeout=120"
 
     if offset:
         url += "&offset={}".format(offset)
@@ -68,15 +68,18 @@ def echo_all(updates):
                 send_message(message,chat)
                 href,message = quality(int(text),obj)
                 i = 0
-                text = "You can download the torrent from the links below\n\n"
-                for link in href:
-                    text += "{}:{}\n\n".format(message[i],link)
-                    i += 1
+                if href == []:
+                    text = "Download link not found."
+                else:
+                    text = "You can download the torrent from the links below\n\n"
+                    for link in href:
+                        text += "{}:{}\n\n".format(message[i],link)
+                        i += 1
                 send_message(text,chat)
             else:
                 if text == "/start":
                     message = "Hi! I am the yts bot.\n"
-                    message += "Enter a movie name"
+                    message += "Enter a movie name."
                 else:
                     message = search(text,obj)          
                 send_message(message, chat)
