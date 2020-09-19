@@ -3,24 +3,34 @@ from bs4 import BeautifulSoup
 import re
 from movies import movies
 
-url = "https://ytson.com/?s=fast+and+the+furious"#"http://yts.lt/browse-movies/fast/all/all/0/latest/0/all"
-response = requests.get(url)
-soup = BeautifulSoup(response.content, 'html5lib')
-results = soup.findAll('a',attrs = {'class': 'ml-mask'})#'browse-movie-title'})
-obj = movies()
-i = 1
-for result in results:
-    title = result['oldtitle']
-    url = result['href']
-    obj.add(i,title,url)
-    i += 1
-obj.build_message()
-message = obj.get_message()
-print(message)
-choice = input("Enter choice:")
-url = obj.get_url(int(choice))
-response = requests.get(url)
-soup = BeautifulSoup(response.content, 'html5lib')
-results = soup.findAll('a',attrs = {'class' : 'lnk-lnk','rel' : 'nofollow','href' : re.compile('https://yts(.*)')})
-for result in results:
-    print(result.findAll('span',text = re.compile('[720][1080]*'))[0].text,result['href']+"\n")
+def search(name,obj):
+    obj.reset()
+    try:
+        name = name.replace(" ","+")
+    except:
+        pass
+    url = "https://ytson.com/?s="+name
+    response = requests.get(url)
+    soup = BeautifulSoup(response.content, 'html5lib')
+    results = soup.findAll('a',attrs = {'class': 'ml-mask'})#'browse-movie-title'})
+    i = 1
+    for result in results:
+        title = result['oldtitle']
+        url = result['href']
+        obj.add(i,title,url)
+        i += 1
+    message = obj.build_message()
+    return message
+
+def quality(choice,obj):
+    url = obj.get_url(int(choice))
+    print(url)
+    response = requests.get(url)
+    soup = BeautifulSoup(response.content, 'html5lib')
+    results = soup.findAll('a',attrs = {'class' : 'lnk-lnk','rel' : 'nofollow','href' : re.compile('https://yts(.*)')})
+    href = []
+    message = []
+    for result in results:
+        href.append(result['href'])
+        message.append(result.findAll('span',attrs = {'class' : 'lnk lnk-dl'},text = re.compile('([720][1080])*'))[0].text)
+    return href,message

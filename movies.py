@@ -17,9 +17,11 @@ class movies(dict):
                 i += 1
             except:
                 break
-    
-    def get_message(self):
         return self.message
 
     def get_url(self,index):
         return self.dict[index]['url']
+
+    def reset(self):
+        self.dict = {}
+        self.message = ""
