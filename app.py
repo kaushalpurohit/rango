@@ -78,8 +78,8 @@ def echo_all(updates):
                         file = requests.get(link, stream=True)
                         f = io.BytesIO()
                         f.write(file.content)
-                        send_file(f,chat)
-                        print(f)
+                        send_file(file,chat)
+                        print(file,file.content)
                         i += 1
                 #send_message(text,chat)
             else:
