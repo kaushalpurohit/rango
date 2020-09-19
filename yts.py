@@ -14,17 +14,20 @@ def search(name,obj):
     soup = BeautifulSoup(response.content, 'html5lib')
     results = soup.findAll('a',attrs = {'class': 'ml-mask'})#'browse-movie-title'})
     i = 1
-    for result in results:
-        title = result['oldtitle']
-        url = result['href']
-        obj.add(i,title,url)
-        i += 1
-    message = obj.build_message()
+    if results == []:
+        message = "No result found"
+    else:
+        for result in results:
+            title = result['oldtitle']
+            url = result['href']
+            obj.add(i,title,url)
+            i += 1
+        message = obj.build_message()
     return message
 
 def quality(choice,obj):
     url = obj.get_url(int(choice))
-    print(url)
+    #print(url)
     response = requests.get(url)
     soup = BeautifulSoup(response.content, 'html5lib')
     results = soup.findAll('a',attrs = {'class' : 'lnk-lnk','rel' : 'nofollow','href' : re.compile('https://yts(.*)')})

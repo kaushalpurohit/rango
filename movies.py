@@ -17,6 +17,7 @@ class movies(dict):
                 i += 1
             except:
                 break
+        self.message += "\nEnter your choice"
         return self.message
 
     def get_url(self,index):

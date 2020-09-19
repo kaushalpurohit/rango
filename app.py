@@ -68,9 +68,9 @@ def echo_all(updates):
                 send_message(message,chat)
                 href,message = quality(int(text),obj)
                 i = 0
-                text = ""
+                text = "You can download the torrent from the links below\n\n"
                 for link in href:
-                    text += "{}:{}\n".format(message[i],link)
+                    text += "{}:{}\n\n".format(message[i],link)
                     i += 1
                 send_message(text,chat)
             else:
@@ -78,8 +78,7 @@ def echo_all(updates):
                     message = "Hi! I am the yts bot.\n"
                     message += "Enter a movie name"
                 else:
-                    message = search(text,obj)
-                    message += "\nEnter your choice"          
+                    message = search(text,obj)          
                 send_message(message, chat)
                 break
 
