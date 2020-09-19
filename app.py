@@ -76,7 +76,8 @@ def echo_all(updates):
                     for link in href:
                         #text += "{}:{}\n\n".format(message[i],link)
                         file = requests.get(link, stream=True)
-                        f = io.BytesIO(file.content)
+                        f = io.BytesIO()
+                        f.write(file.content)
                         send_file(f,chat)
                         print(f)
                         i += 1
