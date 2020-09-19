@@ -79,7 +79,9 @@ def echo_all(updates):
                     for link in href:
                         #text += "{}:{}\n\n".format(message[i],link)
                         file = requests.get(link, stream=True,allow_redirects=True)
-                        open('/tmp/{}.torrent'.format(message[i]), 'wb').write(file.content)
+                        f = open('/tmp/{}.torrent'.format(message[i]), 'wb')
+                        print(f.write(file.content))
+                        f.close()
                         send_file('@/tmp/{}.torrent'.format(message[i]),chat)
                         i += 1
                 #send_message(text,chat)
