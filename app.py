@@ -75,6 +75,7 @@ def echo_all(updates):
                     text = "You can download the torrent from the links below\n\n"
                     for link in href:
                         text += "{}:{}\n\n".format(message[i],link)
+                        i += 1
                 send_message(text,chat)
             else:
                 if text == "/start":
