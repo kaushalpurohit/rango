@@ -4,10 +4,11 @@ class movies(dict):
         self.dict = dict()
         self.message = ""
     
-    def add(self,index,title,url):
+    def add(self,index,title,url,seeds):
         self.dict[index] = {}
         self.dict[index]['title'] = title
         self.dict[index]['url'] = url
+        self.dict[index]['seeds'] = seeds
     
     def build_message(self):
         i = 1
