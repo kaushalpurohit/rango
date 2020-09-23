@@ -29,6 +29,8 @@ def search(name,obj):
 def quality(choice,obj):
     url = obj.get_url(int(choice))
     #print(url)
+    if obj.get_seeds(int(choice)):
+        return [],""
     response = requests.get(url)
     soup = BeautifulSoup(response.content, 'html5lib')
     results = soup.findAll('a',attrs = {'class' : 'lnk-lnk','rel' : 'nofollow','href' : re.compile('https://yts(.*)')})
@@ -39,18 +41,31 @@ def quality(choice,obj):
         message.append(result.findAll('span',attrs = {'class' : 'lnk lnk-dl'},text = re.compile('([720][1080])*'))[0].text)
     return href,message
 
-def search_1337x():
-    search = input("Enter search term:")
+def search_1337x(search,obj):
+    obj.reset()
     url = f'https://www.1377x.to/search/{search}/1'
     response = requests.get(url)
     soup = BeautifulSoup(response.content,'html5lib')
     href = soup.findAll('a', attrs = {'href' : re.compile('/torrent/(.*)')})
     seeds = soup.findAll('td', attrs = {'class' : 'seeds'})
-    obj = movies()
     i = 1
-    for (link,seed) in zip(href,seeds):
-        obj.add(i,link.text,link['href'],seed)
-        i += 1
-    print(obj.get_url(1))
+    if href == []:
+        message = "No results found"
+    else:
+        for (link,seed) in zip(href,seeds):
+            obj.add(i,link.text,link['href'],seed.text)
+            i += 1
+        message = obj.build_message()
+    return message
 
-search_1337x()
+def get_magnet_1337x(choice,obj):
+    url = 'https://www.1377x.to' + obj.get_url(int(choice))
+    reponse = requests.get(url)
+    soup = BeautifulSoup(reponse.content,'html5lib')
+    magnets = soup.findAll('a', attrs = {'href' : re.compile('magnet(.*)')})
+    href = []
+    message = []
+    for magnet in magnets:
+        href.append(magnet['href'])
+    print("done")
+    return href

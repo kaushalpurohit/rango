@@ -5,10 +5,10 @@ Telegram bot to download books from pdfdrive.com
 import json
 import requests
 import time
-from yts import search,quality
+from yts import search,quality,search_1337x,get_magnet_1337x
 from movies import movies
 import urllib
-import tempfile
+import re
 
 TOKEN = "1250079555:AAGxMQFXbCTR7hQCFcc7uLXzCYMyvEiTCU8" # Bot token
 URL = "https://api.telegram.org/bot{}/".format(TOKEN)
@@ -68,21 +68,32 @@ def echo_all(updates):
                 message = "Please wait."
                 send_message(message,chat)
                 href,message = quality(int(text),obj)
+                if href == []:
+                    href = get_magnet_1337x(int(text),obj)
                 i = 0
                 if href == []:
                     text = "Download link not found."
                 else:
                     text = "You can download the torrent from the links below\n\n"
                     for link in href:
-                        text += "{}:{}\n\n".format(message[i],link)
+                        if message != "":
+                            text += "{}: {}\n\n".format(message[i],link)
+                        else:
+                            text += str(i+1)+". {}\n\n".format(link)
                         i += 1
                 send_message(text,chat)
             else:
                 if text == "/start":
                     message = "Hi! I am the yts bot.\n"
                     message += "Enter a movie name."
+                elif re.search("/yts",text):
+                    query = re.findall("/yts (.*)",text)
+                    message = search(query[0],obj)
+                elif re.search("/1337x",text):
+                    query = re.findall("/1337x (.*)",text)
+                    message = search_1337x(query[0],obj)
                 else:
-                    message = search(text,obj)          
+                    message = "Send a message in the following way:\n/1337x {search-term} or /yts {search-term}"       
                 send_message(message, chat)
                 break
 
@@ -94,8 +105,9 @@ def send_file(file,chat):
     get_response(url)
 
 def send_message(text, chat_id):
+    text = urllib.parse.quote_plus(text)
     text = text.replace("&","and")
-    url = URL + "sendMessage?text={}&chat_id={}".format(text, chat_id)
+    url = URL + "sendMessage?text={}&chat_id={})".format(text, chat_id)
     get_response(url)
 
 def main():

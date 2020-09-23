@@ -14,7 +14,11 @@ class movies(dict):
         i = 1
         while i <= 10:
             try:
-                self.message += "{}.{}\n".format(i,self.dict[i]['title'])
+                seeds = self.dict[i]['seeds']
+                if not seeds:
+                    self.message += "{}.{}\n".format(i,self.dict[i]['title'])
+                else:
+                    self.message += "{}.{} seeds:{}\n".format(i,self.dict[i]['title'],seeds)
                 i += 1
             except:
                 break
@@ -23,6 +27,12 @@ class movies(dict):
 
     def get_url(self,index):
         return self.dict[index]['url']
+    
+    def get_title(self,index):
+        return self.dict[index]['title']
+    
+    def get_seeds(self,index):
+        return self.dict[index]['seeds']
 
     def reset(self):
         self.dict = {}
