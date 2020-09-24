@@ -1,124 +1,68 @@
-"""
-Telegram bot to download books from pdfdrive.com
-"""
-
 import json
 import requests
 import time
-from yts import search,quality,search_1337x,get_magnet_1337x
+from yts import search,quality, get_magnet_1337x, search_1337x
 from movies import movies
 import urllib
+from telegram.ext import Updater, InlineQueryHandler, CommandHandler, MessageHandler, ConversationHandler, Filters
+from telegram import ParseMode
+import requests
 import re
 
-TOKEN = "1250079555:AAGxMQFXbCTR7hQCFcc7uLXzCYMyvEiTCU8" # Bot token
-URL = "https://api.telegram.org/bot{}/".format(TOKEN)
 obj = movies()
 
-def get_response(url):
-    response = requests.get(url)
-    content = response.content.decode("UTF-8")
-    return content
+def bop(bot, update):
+    chat_id = update.message.chat_id
+    bot.send_photo(chat_id=chat_id)
 
-def get_json_from_url(url):
-    content = get_response(url)
-    js = json.loads(content)
-    return js
+def yts(bot, update):
+    chat_id = update.message.chat_id
+    message = update.message.text
+    message = re.findall("/yts (.*)",message)
+    message = search(message[0],obj)
+    bot.send_message(chat_id=chat_id,text=message)
 
-def get_updates(offset=None):
+def x(bot,update):
+    chat_id = update.message.chat_id
+    message = update.message.text
+    message = re.findall("/1337x (.*)",message)
+    message = search_1337x(message[0],obj)
+    bot.send_message(chat_id=chat_id,text=message)
 
-    url = URL + "getUpdates?timeout=120"
-
-    if offset:
-        url += "&offset={}".format(offset)
-
-    js = get_json_from_url(url)
-    return js
-
-def get_last_chat_id_and_text(updates):
-    """checks for last text and chat id and returns the same"""
-
-    num_updates = len(updates["result"])
-    last_update = num_updates - 1
-    text = updates["result"][last_update]["message"]["text"]
-    chat_id = updates["result"][last_update]["message"]["chat"]["id"]
-    return (text, chat_id)
-
-def get_last_update_id(updates):
-    """Checks for last update id and returns the latest update id"""
-
-    update_ids = []
-
-    for update in updates["result"]:
-        update_ids.append(int(update["update_id"]))
-
-    return max(update_ids)
-
-def echo_all(updates):
-    """iterates over updates"""
-    for update in updates["result"]:
-        try:
-            text = update["message"]["text"]
-            chat = update["message"]["chat"]["id"]
-            is_int = True
-            try:
-                int(text)
-            except ValueError:
-                is_int = False
-            if is_int: # if the user's reponse is an integer download fucntion is called
-                message = "Please wait."
-                send_message(message,chat)
-                href,message = quality(int(text),obj)
-                if href == []:
-                    href = get_magnet_1337x(int(text),obj)
-                i = 0
-                if href == []:
-                    text = "Download link not found."
-                else:
-                    text = "You can download the torrent from the links below\n\n"
-                    for link in href:
-                        if message != "":
-                            text += "{}: {}\n\n".format(message[i],link)
-                        else:
-                            text += str(i+1)+". {}\n\n".format(link)
-                        i += 1
-                send_message(text,chat)
+def reply(bot,update):
+    chat_id = update.message.chat_id
+    query = update.message.text
+    href,message = quality(int(query),obj)
+    if href == []:
+        href = get_magnet_1337x(int(query),obj)
+    if href == []:
+        text = "Download link not found."
+    else:
+        text = "You can download the torrent from the following links\n\n"
+        i = 0
+        replacements = ['_', '*', '[', ']', '(', ')', '~', '`', '>', '#', '+', '-', '=', '|', '{', '}', '.', '!']
+        for link in href:
+            for replacement in replacements:
+                link = link.replace(replacement,'\\{}'.format(replacement))
+                if message != "":
+                    message[i] = message[i].replace(replacement,'\\{}'.format(replacement))
+            if message != "":
+                text += "[{}]({})\n".format(message[i],link)
             else:
-                if text == "/start":
-                    message = "Hi! I am the yts bot.\n"
-                    message += "Enter a movie name."
-                elif re.search("/yts",text):
-                    query = re.findall("/yts (.*)",text)
-                    message = search(query[0],obj)
-                elif re.search("/1337x",text):
-                    query = re.findall("/1337x (.*)",text)
-                    message = search_1337x(query[0],obj)
-                else:
-                    message = "Send a message in the following way:\n/1337x {search-term} or /yts {search-term}"       
-                send_message(message, chat)
-                break
+                text += "{}\\.{}\n\n".format(i+1,link)
+            i += 1
+        
+    bot.send_message(chat_id=chat_id,text=text,parse_mode=ParseMode.MARKDOWN_V2)
 
-        except Exception as e:
-            print(e)
-
-def send_file(file,chat):
-    url = URL + "sendDocument?document={}&chat_id={}".format(file,chat)
-    get_response(url)
-
-def send_message(text, chat_id):
-    text = urllib.parse.quote_plus(text)
-    text = text.replace("&","and")
-    url = URL + "sendMessage?text={}&chat_id={})".format(text, chat_id)
-    get_response(url)
 
 def main():
-    last_update_id = None
-    while True:
-        updates = get_updates(last_update_id)
-        if len(updates["result"]) > 0:
-            last_update_id = get_last_update_id(updates) + 1 # increments update id
-            echo_all(updates)
-        time.sleep(0.5)
-
+    updater = Updater("1250079555:AAGxMQFXbCTR7hQCFcc7uLXzCYMyvEiTCU8")
+    dp = updater.dispatcher
+    dp.add_handler(CommandHandler('yts',yts))
+    dp.add_handler(CommandHandler('1337x',x))
+    dp.add_handler(MessageHandler(Filters.text,reply))
+    updater.start_polling()
+    updater.idle()
 
 if __name__ == '__main__':
     main()
