@@ -32,25 +32,28 @@ def x(bot,update):
 def reply(bot,update):
     chat_id = update.message.chat_id
     query = update.message.text
-    href,message = quality(int(query),obj)
-    if href == []:
-        href = get_magnet_1337x(int(query),obj)
-    if href == []:
-        text = "Download link not found."
-    else:
-        text = "You can download the torrent from the following links\n\n"
-        i = 0
-        replacements = ['_', '*', '[', ']', '(', ')', '~', '`', '>', '#', '+', '-', '=', '|', '{', '}', '.', '!']
-        for link in href:
-            for replacement in replacements:
-                link = link.replace(replacement,'\\{}'.format(replacement))
+    try:
+        href,message = quality(int(query),obj)
+        if href == []:
+            href = get_magnet_1337x(int(query),obj)
+        if href == []:
+            text = "Download link not found."
+        else:
+            text = "You can download the torrent from the following links\n\n"
+            i = 0
+            replacements = ['_', '*', '[', ']', '(', ')', '~', '`', '>', '#', '+', '-', '=', '|', '{', '}', '.', '!']
+            for link in href:
+                for replacement in replacements:
+                    link = link.replace(replacement,'\\{}'.format(replacement))
+                    if message != "":
+                        message[i] = message[i].replace(replacement,'\\{}'.format(replacement))
                 if message != "":
-                    message[i] = message[i].replace(replacement,'\\{}'.format(replacement))
-            if message != "":
-                text += "[{}]({})\n".format(message[i],link)
-            else:
-                text += "{}\\.{}\n\n".format(i+1,link)
-            i += 1
+                    text += "[{}]({})\n".format(message[i],link)
+                else:
+                    text += "{}\\.{}\n\n".format(i+1,link)
+                i += 1
+    except:
+        text = "Enter a valid query\nFor eg\\. /yts \\{query\\} or /1337x \\{query\\}"
         
     bot.send_message(chat_id=chat_id,text=text,parse_mode=ParseMode.MARKDOWN_V2)
 

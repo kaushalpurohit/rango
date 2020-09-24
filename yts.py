@@ -64,8 +64,6 @@ def get_magnet_1337x(choice,obj):
     soup = BeautifulSoup(reponse.content,'html5lib')
     magnets = soup.findAll('a', attrs = {'href' : re.compile('magnet(.*)')})
     href = []
-    message = []
     for magnet in magnets:
         href.append(magnet['href'])
-    print("done")
     return href
