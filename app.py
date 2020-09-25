@@ -64,7 +64,7 @@ def main():
     dp.add_handler(CommandHandler('yts',yts))
     dp.add_handler(CommandHandler('1337x',x))
     dp.add_handler(MessageHandler(Filters.text,reply))
-    updater.start_polling()
+    updater.start_polling(timeout=180)
     updater.idle()
 
 if __name__ == '__main__':

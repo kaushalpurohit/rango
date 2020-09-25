@@ -1,7 +1,6 @@
-beautifulsoup4==4.8.2
-requests==2.24.0
-bs4==0.0.1
-html5lib==1.1
-urllib3==1.25.10
-telegram
+beautifulsoup4
+requests
+bs4
+html5lib
+urllib3
 python-telegram-bot
