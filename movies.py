@@ -1,3 +1,5 @@
+"""Dicitonary to store torrent details"""
+
 class movies(dict):
     
     def __init__(self):
@@ -12,9 +14,11 @@ class movies(dict):
     
     def build_message(self):
         i = 1
+
         while i <= 10:
             try:
                 seeds = self.dict[i]['seeds']
+                # Building message based on seeds.
                 if not seeds:
                     self.message += "{}.{}\n".format(i,self.dict[i]['title'])
                 else:
@@ -22,6 +26,7 @@ class movies(dict):
                 i += 1
             except:
                 break
+
         self.message += "\nEnter your choice"
         return self.message
 
