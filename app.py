@@ -1,22 +1,17 @@
-"""A Telegram bot to get torrent based on the user's query from yts and 1337x"""
+"""Telegram bot to get torrent based on the user's query from yts and 1337x."""
 
-import json
-import requests
-import time
 from torrent import search, quality, get_magnet_1337x, search_1337x
 from movies import movies
-import urllib
-from telegram.ext import Updater, InlineQueryHandler, CommandHandler, MessageHandler, ConversationHandler, Filters
+from telegram.ext import Updater, CommandHandler, Filters, MessageHandler
 from telegram import ParseMode
-import requests
 import re
 import inspect
 
 obj = movies()
 
-def start(bot, update):
 
-    chat_id = update.message.chat_id
+def start(update, context):
+
     message = inspect.cleandoc(''' Hi\\! I'm the torrent downloader bot\\.
                 You can search from *1337x* or *yts*\\.\n
                 Use the following commands to do so\\.\n
@@ -24,34 +19,31 @@ def start(bot, update):
                 /yts \\- to search from yts\\.\n
                 For eg\\. /yts Inception  '''
                 )
-    bot.send_message(chat_id = chat_id, text = message, parse_mode = ParseMode.MARKDOWN_V2)
+    update.message.reply_text(message)
 
-def yts(bot, update):
-    """A function to search for torrent from yts and send the results to the user"""
 
-    chat_id = update.message.chat_id
+def yts(update, context):
+    """Search for torrent from yts and send the results to the user"""
     message = update.message.text
     message = re.findall("/yts (.*)", message)
     message = search(message[0], obj)
-    bot.send_message(chat_id = chat_id, text = message)
+    update.message.reply_text(message)
 
-def x(bot, update):
-    """A function to search for torrent from 1337x and send the results to the user"""
 
-    chat_id = update.message.chat_id
+def x(update, context):
+    """Search for torrent from 1337x and send the results to the user"""
     message = update.message.text
     message = re.findall("/1337x (.*)", message)
     message = search_1337x(message[0], obj)
-    bot.send_message(chat_id = chat_id, text = message)
+    update.message.reply_text(message)
 
-def reply(bot, update):
-    """A function to send the torrent file based the selected search result"""
 
-    chat_id = update.message.chat_id
+def reply(update, context):
+    """Send the torrent file based the selected search result."""
     query = update.message.text
 
     try:
-        href,message = quality(int(query),obj)
+        href, message = quality(int(query),obj)
         # If the function quality returns an empty list then get_magnet_1337x() is called
         if href == []:
             href = get_magnet_1337x(int(query),obj)
@@ -61,11 +53,13 @@ def reply(bot, update):
         else:
             text = "You can download the torrent from the following links\n\n"
             i = 0
-            # These characters are not accepted in this format in telegram so they have to be modified accordingly.
+            # These characters are not accepted in this format in telegram so
+            # they have to be modified accordingly.
             replacements = ['_', '*', '[', ']', '(', ')', '~', '`', '>', '#', '+', '-', '=', '|', '{', '}', '.', '!']
             for link in href:
                 for replacement in replacements:
-                    # If any character from replacements is present then it is replaced with \ before the character.
+                    # If any character from replacements is present then it is 
+                    # replaced with \ before the character.
                     # For eg. * is replaced with \*
                     link = link.replace(replacement, '\\{}'.format(replacement))
                     if message != "":
@@ -78,14 +72,15 @@ def reply(bot, update):
                 else:
                     text += "{}\\.{}\n\n".format(i + 1, link)
                 i += 1
-    except:
+    except Exception as e:
+        print(e)
         text = "Enter a valid query\n\nFor eg\\. /yts Joker"
-        
-    bot.send_message(chat_id = chat_id, text = text, parse_mode = ParseMode.MARKDOWN_V2)
+    
+    update.message.reply_text(text)
 
 
 def main():
-    updater = Updater("1250079555:AAGxMQFXbCTR7hQCFcc7uLXzCYMyvEiTCU8") # Enter your token here
+    updater = Updater("1250079555:AAGxMQFXbCTR7hQCFcc7uLXzCYMyvEiTCU8", use_context=True) # Enter your token here
     dp = updater.dispatcher
     # Handlers are created for getting torrent from specified websites.
     dp.add_handler(CommandHandler('start', start))
@@ -93,8 +88,9 @@ def main():
     dp.add_handler(CommandHandler('1337x', x))
     dp.add_handler(MessageHandler(Filters.text, reply))
     # By default timeout is 0.
-    updater.start_polling(timeout = 180)
+    updater.start_polling(timeout=180)
     updater.idle()
+
 
 if __name__ == '__main__':
     main()
