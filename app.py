@@ -3,6 +3,7 @@
 from torrent import search, quality, get_magnet_1337x, search_1337x
 from movies import movies
 from telegram.ext import Updater, CommandHandler, Filters, MessageHandler
+from telegram import ParseMode
 from os import environ
 from dotenv import load_dotenv
 import re
@@ -15,13 +16,13 @@ TOKEN = environ.get("TOKEN")
 
 def start(update, context):
     """Send instructions."""
-    message = inspect.cleandoc(''' Hi\\! I'm the torrent downloader bot\\.
-                You can search from *1337x* or *yts*\\.\n
-                Use the following commands to do so\\.\n
-                /1337x \\- to search from *1337x*\\.\n
-                /yts \\- to search from yts\\.\n
-                For eg\\. /yts Inception  ''')
-    update.message.reply_text(message)
+    message = inspect.cleandoc(''' Hi! I'm the torrent downloader bot.
+                You can search from *1337x* or *yts*.\n
+                Use the following commands to do so.\n
+                /1337x - to search from *1337x*.\n
+                /yts - to search from *yts*.\n
+                For eg. /yts Inception  ''')
+    update.message.reply_text(message, parse_mode=ParseMode.MARKDOWN)
 
 
 def yts(update, context):
@@ -37,7 +38,7 @@ def x(update, context):
     message = update.message.text
     message = re.findall("/1337x (.*)", message)
     message = search_1337x(message[0], obj)
-    update.message.reply_text(message)
+    update.message.reply_text(message, parse_mode=ParseMode.MARKDOWN)
 
 
 def reply(update, context):
@@ -56,34 +57,20 @@ def reply(update, context):
         else:
             text = "You can download the torrent from the following links\n\n"
             i = 0
-            # These characters are not accepted in this format in telegram so
-            # they have to be modified accordingly.
-            replacements = ['_', '*', '[', ']', '(', ')', '~', '`', '>', '#',
-                            '+', '-', '=', '|', '{', '}', '.', '!']
             for link in href:
-                for replacement in replacements:
-                    # If any character from replacements is present then it is
-                    # replaced with \ before the character.
-                    # For eg. * is replaced with \*
-                    link = link.replace(replacement, f'\\{replacement}')
-                    if message != "":
-                        # If message is not empty this means torrent is from
-                        # yts and the message is modified accoringly.
-                        message[i] = message[i].replace(replacement,
-                                                        f'\\{replacement}')
                 if message != "":
                     # Inline url is created for yts torrent links an not for
                     # 1337x since 1337x returns magnet links
                     # which cannot be used as an inline url in telegram.
                     text += "[{}]({})\n".format(message[i], link)
                 else:
-                    text += "{}\\.{}\n\n".format(i + 1, link)
+                    text += "{}.{}\n\n".format(i + 1, link)
                 i += 1
     except Exception as e:
         print(e)
-        text = "Enter a valid query\n\nFor eg\\. /yts Joker"
+        text = "Enter a valid query\n\nFor eg. /yts Joker"
 
-    update.message.reply_text(text)
+    update.message.reply_text(text, parse_mode=ParseMode.MARKDOWN)
 
 
 def main():

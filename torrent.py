@@ -15,7 +15,7 @@ def search(name, obj):
         print(e)
         pass
 
-    url = "https://ytson.com/?s=" + name
+    url = "https://ytsnew.com/?s=" + name
     response = requests.get(url)
     soup = BeautifulSoup(response.content, 'html5lib')
     results = soup.findAll('a', attrs={'class': 'ml-mask'})

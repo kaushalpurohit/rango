@@ -28,7 +28,7 @@ class movies(dict):
                 if not seeds:
                     self.message += f"{i}.{title}\n"
                 else:
-                    self.message += f"{i}.{title} seeds:{seeds}\n"
+                    self.message += f"{i}.{title} seeds:*{seeds}*\n"
                 i += 1
             except Exception as e:
                 print(e)
