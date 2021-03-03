@@ -1,6 +1,6 @@
 """Telegram bot to get torrent based on the user's query from yts and 1337x."""
 
-from torrent import search, quality, get_magnet_1337x, search_1337x
+import torrent
 from movies import movies
 from telegram.ext import Updater, CommandHandler, Filters, MessageHandler
 from telegram import ParseMode
@@ -25,11 +25,19 @@ def start(update, context):
     update.message.reply_text(message, parse_mode=ParseMode.MARKDOWN)
 
 
+def subs(update, context):
+    """Search for subs."""
+    message = update.message.text
+    message = re.findall("/subs (.*)", message)
+    message = torrent.search_subs(message[0], obj)
+    update.message.reply_text(message)
+
+
 def yts(update, context):
     """Search for torrent from yts and send the results to the user."""
     message = update.message.text
     message = re.findall("/yts (.*)", message)
-    message = search(message[0], obj)
+    message = torrent.search(message[0], obj)
     update.message.reply_text(message)
 
 
@@ -37,7 +45,7 @@ def x(update, context):
     """Search for torrent from 1337x and send the results to the user."""
     message = update.message.text
     message = re.findall("/1337x (.*)", message)
-    message = search_1337x(message[0], obj)
+    message = torrent.search_1337x(message[0], obj)
     update.message.reply_text(message, parse_mode=ParseMode.MARKDOWN)
 
 
@@ -46,11 +54,11 @@ def reply(update, context):
     query = update.message.text
 
     try:
-        href, message = quality(int(query), obj)
+        href, message = torrent.quality(int(query), obj)
         # If the function quality returns an empty list then
         # get_magnet_1337x() is called
         if href == []:
-            href = get_magnet_1337x(int(query), obj)
+            href = torrent.get_magnet_1337x(int(query), obj)
         # If the function returns an empty list it means no link is found.
         if href == []:
             text = "Download link not found."
@@ -81,6 +89,7 @@ def main():
     dp.add_handler(CommandHandler('start', start))
     dp.add_handler(CommandHandler('yts', yts))
     dp.add_handler(CommandHandler('1337x', x))
+    dp.add_handler(CommandHandler('subs', subs))
     dp.add_handler(MessageHandler(Filters.text, reply))
     # By default timeout is 0.
     updater.start_polling(timeout=180)
