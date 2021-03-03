@@ -43,24 +43,29 @@ def quality(choice, obj):
     if obj.get_seeds(int(choice)):
         return [], ""
 
-    response = requests.get(url)
-    soup = BeautifulSoup(response.content, 'html5lib')
-    results = soup.findAll('a',
-                           attrs={'class': 'lnk-lnk',
-                                  'rel': 'nofollow',
-                                  'href': re.compile('https://yts(.*)')
-                                  }
-                           )
     href = []
     message = []
 
-    for result in results:
-        href.append(result['href'])
-        message.append(result.findAll('span',
-                                      attrs={'class': 'lnk lnk-dl'},
-                                      text=re.compile('([720][1080])*')
-                                      )[0].text)
+    try:
+        response = requests.get(url)
+        soup = BeautifulSoup(response.content, 'html5lib')
+        results = soup.findAll('a',
+                               attrs={'class': 'lnk-lnk',
+                                      'rel': 'nofollow',
+                                      'href': re.compile('https://yts(.*)')
+                                      }
+                               )
 
+        for result in results:
+            href.append(result['href'])
+            message.append(result.findAll('span',
+                                          attrs={'class': 'lnk lnk-dl'},
+                                          text=re.compile('([720][1080])*')
+                                          )[0].text)
+
+    except Exception as e:
+        print(e)
+    
     return href, message
 
 
@@ -119,3 +124,26 @@ def search_subs(search, obj):
         i += 1
     message = obj.build_message()
     return message
+
+
+def get_subs(choice, obj):
+    """Return subtitle download links."""
+    url = "https://yts-subs.com" + obj.get_url(int(choice))
+    reponse = requests.get(url)
+    soup = BeautifulSoup(reponse.content, 'html5lib')
+    table = soup.find('tbody')
+    results = table.findAll('tr')
+    href = []
+    message = []
+    for result in results:
+        link = result.find('a')['href']
+        link = link.replace('subtitles', 'subtitle')
+        language = result.findAll('td', {'class': 'flag-cell'})[0].text.strip()
+        title = result.find('a').text.strip()
+        title = re.findall("subtitle (.*)", title)[0]
+        title = re.sub('(\[.*\])', '', title)
+        title = f"{language}: {title}"
+        link = f"https://yifysubtitles.org{link}.zip"
+        href.append(link)
+        message.append(title)
+    return href, message
