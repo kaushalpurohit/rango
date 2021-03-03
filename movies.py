@@ -9,21 +9,26 @@ class movies(dict):
         self.dict = dict()
         self.message = ""
 
-    def add(self, index, title, url, seeds):
-        """Add details."""
-        self.dict[index] = {}
-        self.dict[index]['title'] = title
-        self.dict[index]['url'] = url
-        self.dict[index]['seeds'] = seeds
+    def chatid(self, chatid):
+        """Create unique dictionary."""
+        self.dict[chatid] = {}
 
-    def build_message(self):
+    def add(self, chatid, index, title, url, seeds):
+        """Add details."""
+        self.dict[chatid][index] = {}
+        self.dict[chatid][index]['title'] = title
+        self.dict[chatid][index]['url'] = url
+        self.dict[chatid][index]['seeds'] = seeds
+
+    def build_message(self, chatid):
         """Build search results."""
         i = 1
 
-        while i <= 10:
+        while i <= 15:
             try:
-                seeds = self.dict[i]['seeds']
-                title = self.dict[i]['title']
+                seeds = self.dict[chatid][i]['seeds']
+                title = self.dict[chatid][i]['title']
+
                 # Building message based on seeds.
                 if not seeds:
                     self.message += f"{i}.{title}\n"
@@ -33,23 +38,22 @@ class movies(dict):
             except Exception as e:
                 print(e)
                 break
-
         self.message += "\nEnter your choice"
         return self.message
 
-    def get_url(self, index):
+    def get_url(self, chatid, index):
         """Return url."""
-        return self.dict[index]['url']
+        return self.dict[chatid][index]['url']
 
-    def get_title(self, index):
+    def get_title(self, chatid, index):
         """Return title."""
-        return self.dict[index]['title']
+        return self.dict[chatid][index]['title']
 
-    def get_seeds(self, index):
+    def get_seeds(self, chatid, index):
         """Return seeds."""
-        return self.dict[index]['seeds']
+        return self.dict[chatid][index]['seeds']
 
-    def reset(self):
+    def reset(self, chatid):
         """Reset dictionary."""
-        self.dict = {}
+        self.dict[chatid] = {}
         self.message = ""

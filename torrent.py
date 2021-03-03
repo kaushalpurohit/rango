@@ -5,9 +5,9 @@ from bs4 import BeautifulSoup
 import re
 
 
-def search(name, obj):
+def search(name, chatid, obj):
     """Search from yts."""
-    obj.reset()
+    obj.reset(chatid)
 
     try:
         name = name.replace(" ", "+")
@@ -27,20 +27,20 @@ def search(name, obj):
         for result in results:
             title = result['oldtitle']
             url = result['href']
-            obj.add(i, title, url, 0)
+            obj.add(chatid, i, title, url, 0)
             i += 1
-        message = obj.build_message()
-
+        message = obj.build_message(chatid)
+    print(message)
     return message
 
 
-def quality(choice, obj):
+def quality(choice, chatid, obj):
     """Download torrent from yts based on quality."""
-    url = obj.get_url(int(choice))
-
+    url = obj.get_url(chatid, int(choice))
+    print(url)
     # If seeds are present that means the data is from 1337x so this function
     # returns empty values.
-    if obj.get_seeds(int(choice)):
+    if obj.get_seeds(chatid, int(choice)):
         return [], ""
 
     href = []
@@ -69,9 +69,9 @@ def quality(choice, obj):
     return href, message
 
 
-def search_1337x(search, obj):
+def search_1337x(search, chatid, obj):
     """Search from 1337x."""
-    obj.reset()
+    obj.reset(chatid)
     url = f'https://www.1377x.to/search/{search}/1'
     response = requests.get(url)
     soup = BeautifulSoup(response.content, 'html5lib')
@@ -83,16 +83,16 @@ def search_1337x(search, obj):
     else:
         i = 1
         for (link, seed) in zip(href, seeds):
-            obj.add(i, link.text, link['href'], seed.text)
+            obj.add(chatid, i, link.text, link['href'], seed.text)
             i += 1
-        message = obj.build_message()
+        message = obj.build_message(chatid)
 
     return message
 
 
-def get_magnet_1337x(choice, obj):
+def get_magnet_1337x(choice, chatid, obj):
     """Get magnet link from 1337x."""
-    url = 'https://www.1377x.to' + obj.get_url(int(choice))
+    url = 'https://www.1377x.to' + obj.get_url(chatid, int(choice))
     reponse = requests.get(url)
     soup = BeautifulSoup(reponse.content, 'html5lib')
     magnets = soup.findAll('a', attrs={'href': re.compile('magnet(.*)')})
@@ -104,9 +104,9 @@ def get_magnet_1337x(choice, obj):
     return href
 
 
-def search_subs(search, obj):
+def search_subs(search, chatid, obj):
     """Search subtitles."""
-    obj.reset()
+    obj.reset(chatid)
     url = "https://yts-subs.com/search/" + search
     reponse = requests.get(url)
     soup = BeautifulSoup(reponse.content, 'html5lib')
@@ -120,15 +120,15 @@ def search_subs(search, obj):
         year = info[0].text.strip()
         year = re.findall("[0-9]+", year)
         title = f"{title} ({year[0]})"
-        obj.add(i, title, href, None)
+        obj.add(chatid, i, title, href, None)
         i += 1
-    message = obj.build_message()
+    message = obj.build_message(chatid)
     return message
 
 
-def get_subs(choice, obj):
+def get_subs(choice, chatid, obj):
     """Return subtitle download links."""
-    url = "https://yts-subs.com" + obj.get_url(int(choice))
+    url = "https://yts-subs.com" + obj.get_url(chatid, int(choice))
     try:
         reponse = requests.get(url)
     except Exception as e:

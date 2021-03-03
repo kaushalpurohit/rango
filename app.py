@@ -31,42 +31,48 @@ def start(update, context):
 
 def subs(update, context):
     """Search for subs."""
+    chatid = update.message.chat.id
     message = update.message.text
+    obj.chatid(chatid)
     message = re.findall("/subs (.*)", message)
-    message = torrent.search_subs(message[0], obj)
+    message = torrent.search_subs(message[0], chatid, obj)
     update.message.reply_text(message)
 
 
 def yts(update, context):
     """Search for torrent from yts and send the results to the user."""
+    chatid = update.message.chat.id
+    obj.chatid(chatid)
     message = update.message.text
     message = re.findall("/yts (.*)", message)
-    message = torrent.search(message[0], obj)
+    message = torrent.search(message[0], chatid, obj)
     update.message.reply_text(message)
 
 
 def x(update, context):
     """Search for torrent from 1337x and send the results to the user."""
+    chatid = update.message.chat.id
     message = update.message.text
+    obj.chatid(chatid)
     message = re.findall("/1337x (.*)", message)
-    message = torrent.search_1337x(message[0], obj)
+    message = torrent.search_1337x(message[0], chatid, obj)
     update.message.reply_text(message, parse_mode=ParseMode.MARKDOWN)
 
 
 def reply(update, context):
     """Send the torrent file based the selected search result."""
     query = update.message.text
-
+    chatid = update.message.chat.id
     try:
-        href, message = torrent.quality(int(query), obj)
+        href, message = torrent.quality(int(query), chatid, obj)
         try:
-            href, message = torrent.get_subs(int(query), obj)
+            href, message = torrent.get_subs(int(query), chatid, obj)
         except Exception as e:
             print(e)
         # If the function quality returns an empty list then
         # get_magnet_1337x() is called
         if href == []:
-            href = torrent.get_magnet_1337x(int(query), obj)
+            href = torrent.get_magnet_1337x(int(query), chatid, obj)
         # If the function returns an empty list it means no link is found.
         if href == []:
             text = "Download link not found."
