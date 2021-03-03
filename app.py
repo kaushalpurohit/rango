@@ -55,7 +55,10 @@ def reply(update, context):
 
     try:
         href, message = torrent.quality(int(query), obj)
-        href, message = torrent.get_subs(int(query), obj)
+        try:
+            href, message = torrent.get_subs(int(query), obj)
+        except Exception as e:
+            print(e)
         # If the function quality returns an empty list then
         # get_magnet_1337x() is called
         if href == []:

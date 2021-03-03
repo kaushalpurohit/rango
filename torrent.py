@@ -65,7 +65,7 @@ def quality(choice, obj):
 
     except Exception as e:
         print(e)
-    
+
     return href, message
 
 
@@ -129,7 +129,11 @@ def search_subs(search, obj):
 def get_subs(choice, obj):
     """Return subtitle download links."""
     url = "https://yts-subs.com" + obj.get_url(int(choice))
-    reponse = requests.get(url)
+    try:
+        reponse = requests.get(url)
+    except Exception as e:
+        print(e)
+        raise Exception("Invalid url")
     soup = BeautifulSoup(reponse.content, 'html5lib')
     table = soup.find('tbody')
     results = table.findAll('tr')
