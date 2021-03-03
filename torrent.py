@@ -150,6 +150,6 @@ def get_subs(choice, obj):
         link = f"https://yifysubtitles.org{link}.zip"
         href.append(link)
         message.append(title)
-        if(i == 10):
+        if(i == 55):
             break
     return href, message
