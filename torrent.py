@@ -139,7 +139,7 @@ def get_subs(choice, obj):
     results = table.findAll('tr')
     href = []
     message = []
-    for result in results:
+    for i, result in enumerate(results):
         link = result.find('a')['href']
         link = link.replace('subtitles', 'subtitle')
         language = result.findAll('td', {'class': 'flag-cell'})[0].text.strip()
@@ -150,4 +150,6 @@ def get_subs(choice, obj):
         link = f"https://yifysubtitles.org{link}.zip"
         href.append(link)
         message.append(title)
+        if(i == 10):
+            break
     return href, message
