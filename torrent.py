@@ -97,3 +97,25 @@ def get_magnet_1337x(choice, obj):
         href.append(magnet['href'])
 
     return href
+
+
+def search_subs(search, obj):
+    """Search subtitles."""
+    obj.reset()
+    url = "https://yts-subs.com/search/" + search
+    reponse = requests.get(url)
+    soup = BeautifulSoup(reponse.content, 'html5lib')
+    results = soup.findAll('div', attrs={'class': 'media-body'})
+    i = 1
+
+    for result in results:
+        href = result.find('a')['href']
+        title = result.find('h3').text
+        info = result.findAll('span', attrs={'class': 'movinfo-section'})
+        year = info[0].text.strip()
+        year = re.findall("[0-9]+", year)
+        title = f"{title} ({year[0]})"
+        obj.add(i, title, href, None)
+        i += 1
+    message = obj.build_message()
+    return message
