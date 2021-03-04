@@ -13,6 +13,10 @@ class movies(dict):
         """Create unique dictionary."""
         self.dict[chatid] = {}
 
+    def command(self, chatid, command):
+        """Set commmand used."""
+        self.dict[chatid]["command"] = command
+
     def add(self, chatid, index, title, url, seeds):
         """Add details."""
         self.dict[chatid][index] = {}
@@ -44,6 +48,10 @@ class movies(dict):
     def get_url(self, chatid, index):
         """Return url."""
         return self.dict[chatid][index]['url']
+
+    def get_command(self, chatid):
+        """Return command."""
+        return self.dict[chatid]["command"]
 
     def get_title(self, chatid, index):
         """Return title."""

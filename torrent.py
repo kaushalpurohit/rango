@@ -30,14 +30,12 @@ def search(name, chatid, obj):
             obj.add(chatid, i, title, url, 0)
             i += 1
         message = obj.build_message(chatid)
-    print(message)
     return message
 
 
 def quality(choice, chatid, obj):
     """Download torrent from yts based on quality."""
     url = obj.get_url(chatid, int(choice))
-    print(url)
     # If seeds are present that means the data is from 1337x so this function
     # returns empty values.
     if obj.get_seeds(chatid, int(choice)):
