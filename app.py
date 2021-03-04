@@ -18,12 +18,13 @@ SONG = environ.get("SONG")
 def start(update, context):
     """Send instructions."""
     chat_id = update.message.chat.id
-    message = "You can download torrent and srt files from "
+    message = "You can download books, torrent and srt files from "
     message += "*1337x*, *yts* and *yts-subs*.\n\n"
     message += "Use the following commands to do so.\n\n"
     message += "/1337x - to search from *1337x*.\n\n"
     message += "/yts - to search from *yts*.\n\n"
     message += "/subs - to search from *yts-subs*.\n\n"
+    message += "/books - to search for books.\n\n"
     message += "For eg. /yts Rango"
     update.message.reply_text("Hi, I'm Rango.", parse_mode=ParseMode.MARKDOWN)
     context.bot.send_audio(chat_id=chat_id, audio=SONG)
@@ -92,7 +93,7 @@ def reply(update, context):
         if href == []:
             text = "Download link not found."
         else:
-            text = "You can download the torrent from the following links\n\n"
+            text = "You can download from the following links\n\n"
             i = 0
             for link in href:
                 if message != "":
