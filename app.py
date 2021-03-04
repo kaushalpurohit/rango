@@ -2,6 +2,7 @@
 
 import torrent
 from movies import movies
+from books import search_books, download_books
 from telegram.ext import Updater, CommandHandler, Filters, MessageHandler
 from telegram import ParseMode
 from os import environ
@@ -59,6 +60,16 @@ def x(update, context):
     update.message.reply_text(message, parse_mode=ParseMode.MARKDOWN)
 
 
+def books(update, context):
+    """Search for books."""
+    chatid = update.message.chat.id
+    message = update.message.text
+    obj.chatid(chatid)
+    message = re.findall("/books (.*)", message)
+    message = search_books(chatid, message[0], obj)
+    update.message.reply_text(message, parse_mode=ParseMode.MARKDOWN)
+
+
 def reply(update, context):
     """Send the torrent file based the selected search result."""
     query = update.message.text
@@ -67,6 +78,10 @@ def reply(update, context):
         href, message = torrent.quality(int(query), chatid, obj)
         try:
             href, message = torrent.get_subs(int(query), chatid, obj)
+        except Exception as e:
+            print(e)
+        try:
+            href, message = download_books(chatid, int(query), obj)
         except Exception as e:
             print(e)
         # If the function quality returns an empty list then
@@ -104,6 +119,7 @@ def main():
     dp.add_handler(CommandHandler('yts', yts))
     dp.add_handler(CommandHandler('1337x', x))
     dp.add_handler(CommandHandler('subs', subs))
+    dp.add_handler(CommandHandler('books', books))
     dp.add_handler(MessageHandler(Filters.text, reply))
     # By default timeout is 0.
     updater.start_polling(timeout=180)
