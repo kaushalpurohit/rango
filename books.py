@@ -6,6 +6,7 @@ from bs4 import BeautifulSoup
 
 def search_books(chatid, book_name, obj):
     """Search for books."""
+    obj.reset(chatid)
     url = "https://www.pdfdrive.com/search?q={}".format(book_name)
 
     source = requests.get(url)
