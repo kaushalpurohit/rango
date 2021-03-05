@@ -96,17 +96,19 @@ def reply(update, context):
         if href == []:
             text = "Download link not found."
         else:
-            text = "You can download from the following links\n\n"
-            i = 0
-            for link in href:
-                if message != "":
+            text = ""
+            if command != "1337x":
+                text = "You can download from the following links\n\n"
+                for i, link in enumerate(href):
                     # Inline url is created for yts torrent links an not for
                     # 1337x since 1337x returns magnet links
                     # which cannot be used as an inline url in telegram.
                     text += "[{}]({})\n".format(message[i], link)
-                else:
-                    text += "{}.{}\n\n".format(i + 1, link)
-                i += 1
+            else:
+                text = "Paste any of the following magnetic link in your"
+                text += " torrent client.\n\n"
+                for i, link in enumerate(href):
+                    text += "{}. {}\n\n".format(i + 1, link)
     except Exception as e:
         print(e)
         text = "Enter a valid query\n\nFor eg. /yts Joker"
