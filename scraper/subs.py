@@ -12,17 +12,15 @@ def search_subs(search, chatid, obj):
     reponse = requests.get(url)
     soup = BeautifulSoup(reponse.content, 'html5lib')
     results = soup.findAll('div', attrs={'class': 'media-body'})
-    i = 1
 
-    for result in results:
+    for i, result in enumerate(results):
         href = result.find('a')['href']
         title = result.find('h3').text
         info = result.findAll('span', attrs={'class': 'movinfo-section'})
         year = info[0].text.strip()
         year = re.findall("[0-9]+", year)
         title = f"{title} ({year[0]})"
-        obj.add(chatid, i, title, href, None)
-        i += 1
+        obj.add(chatid, i + 1, title, href, None)
     message = obj.build_message(chatid)
     return message
 

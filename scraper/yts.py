@@ -23,12 +23,10 @@ def search_yts(name, chatid, obj):
     if results == []:
         message = "No result found"
     else:
-        i = 1
-        for result in results:
+        for i, result in enumerate(results):
             title = result['oldtitle']
             url = result['href']
-            obj.add(chatid, i, title, url, 0)
-            i += 1
+            obj.add(chatid, i + 1, title, url, 0)
         message = obj.build_message(chatid)
     return message
 

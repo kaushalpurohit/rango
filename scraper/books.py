@@ -17,7 +17,7 @@ def search_books(chatid, book_name, obj):
     for i, result in enumerate(results):
         title = result.find('h2').text
         link = result['href']
-        obj.add(chatid, i, title, link, None)
+        obj.add(chatid, i + 1, title, link, None)
 
     message = obj.build_message(chatid)
     return message
