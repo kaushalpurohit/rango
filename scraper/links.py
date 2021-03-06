@@ -1,7 +1,7 @@
 """Dictionary to store torrent details."""
 
 
-class movies(dict):
+class links(dict):
     """Handle dictionary functions."""
 
     def __init__(self):

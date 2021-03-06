@@ -1,15 +1,17 @@
 """Telegram bot to get torrent based on the user's query from yts and 1337x."""
 
-import torrent
-from movies import movies
-from books import search_books, download_books
-from telegram.ext import Updater, CommandHandler, Filters, MessageHandler
-from telegram import ParseMode
-from os import environ
-from dotenv import load_dotenv
 import re
+from os import environ
+from telegram import ParseMode
+from dotenv import load_dotenv
+from scraper.links import links
+from scraper.yts import search_yts, get_quality_yts
+from scraper.x import search_1337x, get_magnet_1337x
+from scraper.subs import search_subs, get_subs
+from scraper.books import search_books, download_books
+from telegram.ext import Updater, CommandHandler, Filters, MessageHandler
 
-obj = movies()
+obj = links()
 load_dotenv()
 TOKEN = environ.get("TOKEN")
 SONG = environ.get("SONG")
@@ -37,7 +39,7 @@ def subs(update, context):
     message = update.message.text
     obj.chatid(chatid)
     message = re.findall("/subs (.*)", message)
-    message = torrent.search_subs(message[0], chatid, obj)
+    message = search_subs(message[0], chatid, obj)
     obj.command(chatid, "subs")
     update.message.reply_text(message)
 
@@ -48,7 +50,7 @@ def yts(update, context):
     obj.chatid(chatid)
     message = update.message.text
     message = re.findall("/yts (.*)", message)
-    message = torrent.search(message[0], chatid, obj)
+    message = search_yts(message[0], chatid, obj)
     obj.command(chatid, "yts")
     update.message.reply_text(message)
 
@@ -59,7 +61,7 @@ def x(update, context):
     message = update.message.text
     obj.chatid(chatid)
     message = re.findall("/1337x (.*)", message)
-    message = torrent.search_1337x(message[0], chatid, obj)
+    message = search_1337x(message[0], chatid, obj)
     obj.command(chatid, "1337x")
     update.message.reply_text(message, parse_mode=ParseMode.MARKDOWN)
 
@@ -83,15 +85,15 @@ def reply(update, context):
     command = obj.get_command(chatid)
     try:
         if command == "yts":
-            href, message = torrent.quality(int(query), chatid, obj)
+            href, message = get_quality_yts(int(query), chatid, obj)
         elif command == "subs":
-            href, message = torrent.get_subs(int(query), chatid, obj)
+            href, message = get_subs(int(query), chatid, obj)
         elif command == "books":
             href, message = download_books(chatid, int(query), obj)
         # If the function quality returns an empty list then
         # get_magnet_1337x() is called
         else:
-            href = torrent.get_magnet_1337x(int(query), chatid, obj)
+            href = get_magnet_1337x(int(query), chatid, obj)
         # If the function returns an empty list it means no link is found.
         if href == []:
             text = "Download link not found."
@@ -128,7 +130,7 @@ def main():
     dp.add_handler(CommandHandler('books', books))
     dp.add_handler(MessageHandler(Filters.text, reply))
     # By default timeout is 0.
-    updater.start_polling(timeout=180)
+    updater.start_polling(timeout=120)
     updater.idle()
 
 
