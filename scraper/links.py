@@ -49,6 +49,10 @@ class links(dict):
         """Return url."""
         return self.dict[chatid][index]['url']
 
+    def get_len(self, chatid):
+        """Return length."""
+        return len(self.dict)
+
     def get_command(self, chatid):
         """Return command."""
         return self.dict[chatid]["command"]
