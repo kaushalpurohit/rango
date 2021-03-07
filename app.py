@@ -8,6 +8,7 @@ from scraper.links import links
 from scraper.yts import search_yts, get_quality_yts
 from scraper.x import search_1337x, get_magnet_1337x
 from scraper.subs import search_subs, get_subs
+from scraper.lyrics import search_lyrics, get_lyrics
 from scraper.books import search_books, download_books
 from telegram.ext import Updater, CommandHandler, Filters, MessageHandler
 
@@ -41,6 +42,17 @@ def subs(update, context):
     message = re.findall("/subs (.*)", message)
     message = search_subs(message[0], chatid, obj)
     obj.command(chatid, "subs")
+    update.message.reply_text(message)
+
+
+def lyrics(update, context):
+    """Search for lyrics."""
+    chatid = update.message.chat.id
+    message = update.message.text
+    obj.chatid(chatid)
+    message = re.findall("/lyrics (.*)", message)
+    message = search_lyrics(chatid, message[0], obj)
+    obj.command(chatid, "lyrics")
     update.message.reply_text(message)
 
 
@@ -81,6 +93,7 @@ def reply(update, context):
     """Send the torrent file based the selected search result."""
     query = update.message.text
     chatid = update.message.chat.id
+    results_len = obj.get_len(chatid)
     message = ""
     command = obj.get_command(chatid)
     try:
@@ -90,30 +103,39 @@ def reply(update, context):
             href, message = get_subs(int(query), chatid, obj)
         elif command == "books":
             href, message = download_books(chatid, int(query), obj)
+        elif command == "lyrics":
+            href, lyrics = get_lyrics(chatid, int(query), obj)
         # If the function quality returns an empty list then
         # get_magnet_1337x() is called
         else:
             href = get_magnet_1337x(int(query), chatid, obj)
         # If the function returns an empty list it means no link is found.
-        if href == []:
+        if href == [] and command != "lyrics":
             text = "Download link not found."
         else:
             text = ""
-            if command != "1337x":
+            if command == "1337x":
+                text = "Paste any of the following magnetic link in your"
+                text += " torrent client.\n\n"
+                for i, link in enumerate(href):
+                    text += "{}. {}\n\n".format(i + 1, link)
+            elif command == "lyrics":
+                text = lyrics
+            else:
                 text = "You can download from the following links\n\n"
                 for i, link in enumerate(href):
                     # Inline url is created for yts torrent links an not for
                     # 1337x since 1337x returns magnet links
                     # which cannot be used as an inline url in telegram.
                     text += "[{}]({})\n".format(message[i], link)
-            else:
-                text = "Paste any of the following magnetic link in your"
-                text += " torrent client.\n\n"
-                for i, link in enumerate(href):
-                    text += "{}. {}\n\n".format(i + 1, link)
     except Exception as e:
         print(e)
-        text = "Enter a valid query\n\nFor eg. /yts Joker"
+        if command == "lyrics":
+            text = "Lyrics not available!"
+        elif results_len > 0 and query.isnumeric() and int(query) > results_len:
+            text = "Enter a valid choice in the range of the results."
+        else:
+            text = "Enter a valid query\n\nFor eg. /yts Joker"
 
     update.message.reply_text(text, parse_mode=ParseMode.MARKDOWN)
 
@@ -128,6 +150,7 @@ def main():
     dp.add_handler(CommandHandler('1337x', x))
     dp.add_handler(CommandHandler('subs', subs))
     dp.add_handler(CommandHandler('books', books))
+    dp.add_handler(CommandHandler('lyrics', lyrics))
     dp.add_handler(MessageHandler(Filters.text, reply))
     # By default timeout is 0.
     updater.start_polling(timeout=120)
