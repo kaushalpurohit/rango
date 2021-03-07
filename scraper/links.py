@@ -28,7 +28,7 @@ class links(dict):
         """Build search results."""
         i = 1
 
-        while i <= 15:
+        while i <= 20:
             try:
                 seeds = self.dict[chatid][i]['seeds']
                 title = self.dict[chatid][i]['title']
