@@ -24,10 +24,11 @@ def start(update, context):
     message = "You can download books, torrent and srt files from "
     message += "*1337x*, *yts* and *yts-subs*.\n\n"
     message += "Use the following commands to do so.\n\n"
-    message += "/1337x - to search from *1337x*.\n\n"
-    message += "/yts - to search from *yts*.\n\n"
-    message += "/subs - to search from *yts-subs*.\n\n"
-    message += "/books - to search for books.\n\n"
+    message += "/torrent - to search for *torrent files*.\n\n"
+    message += "/yts - to search for *movies*.\n\n"
+    message += "/subs - to search for *subtitles*.\n\n"
+    message += "/books - to search for *books*.\n\n"
+    message += "/lyrics - to search for *lyrics*.\n\n"
     message += "For eg. /yts Rango"
     update.message.reply_text("Hi, I'm Rango.", parse_mode=ParseMode.MARKDOWN)
     context.bot.send_audio(chat_id=chat_id, audio=SONG)
@@ -72,7 +73,7 @@ def x(update, context):
     chatid = update.message.chat.id
     message = update.message.text
     obj.chatid(chatid)
-    message = re.findall("/1337x (.*)", message)
+    message = re.findall("/torrent (.*)", message)
     message = search_1337x(message[0], chatid, obj)
     obj.command(chatid, "1337x")
     update.message.reply_text(message, parse_mode=ParseMode.MARKDOWN)
@@ -147,7 +148,7 @@ def main():
     # Handlers are created for getting torrent from specified websites.
     dp.add_handler(CommandHandler('start', start))
     dp.add_handler(CommandHandler('yts', yts))
-    dp.add_handler(CommandHandler('1337x', x))
+    dp.add_handler(CommandHandler('torrent', x))
     dp.add_handler(CommandHandler('subs', subs))
     dp.add_handler(CommandHandler('books', books))
     dp.add_handler(CommandHandler('lyrics', lyrics))
