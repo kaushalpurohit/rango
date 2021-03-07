@@ -131,10 +131,10 @@ def reply(update, context):
                     text += "[{}]({})\n".format(message[i], link)
     except Exception as e:
         print(e)
-        if command == "lyrics":
-            text = "Lyrics not available!"
-        elif results_len > 0 and query.isnumeric() and int(query) > results_len:
+        if results_len > 0 and query.isnumeric() and int(query) > results_len:
             text = "Enter a valid choice in the range of the results."
+        elif command == "lyrics":
+            text = "Lyrics not available!"
         else:
             text = "Enter a valid query\n\nFor eg. /yts Joker"
 
