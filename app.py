@@ -7,6 +7,7 @@ from dotenv import load_dotenv
 from scraper.links import links
 from scraper.yts import search_yts, get_quality_yts
 from scraper.x import search_1337x, get_magnet_1337x
+from scraper.games import search_games
 from scraper.subs import search_subs, get_subs
 from scraper.lyrics import search_lyrics, get_lyrics
 from scraper.books import search_books, download_books
@@ -43,6 +44,17 @@ def subs(update, context):
     message = re.findall("/subs (.*)", message)
     message = search_subs(message[0], chatid, obj)
     obj.command(chatid, "subs")
+    update.message.reply_text(message)
+
+
+def games(update, context):
+    """Search for games."""
+    chatid = update.message.chat.id
+    message = update.message.text
+    obj.chatid(chatid)
+    message = re.findall("/games (.*)", message)
+    message = search_games(chatid, message[0], obj)
+    obj.command(chatid, "games")
     update.message.reply_text(message)
 
 
@@ -152,6 +164,7 @@ def main():
     dp.add_handler(CommandHandler('subs', subs))
     dp.add_handler(CommandHandler('books', books))
     dp.add_handler(CommandHandler('lyrics', lyrics))
+    dp.add_handler(CommandHandler('games', games))
     dp.add_handler(MessageHandler(Filters.text, reply))
     # By default timeout is 0.
     updater.start_polling(timeout=120)
