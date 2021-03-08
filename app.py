@@ -7,7 +7,7 @@ from dotenv import load_dotenv
 from scraper.links import links
 from scraper.yts import search_yts, get_quality_yts
 from scraper.x import search_1337x, get_magnet_1337x
-from scraper.games import search_games
+from scraper.games import search_games, get_games
 from scraper.subs import search_subs, get_subs
 from scraper.lyrics import search_lyrics, get_lyrics
 from scraper.books import search_books, download_books
@@ -118,6 +118,8 @@ def reply(update, context):
             href, message = download_books(chatid, int(query), obj)
         elif command == "lyrics":
             href, lyrics = get_lyrics(chatid, int(query), obj)
+        elif command == "games":
+            href, message = get_games(chatid, int(query), obj)
         # If the function quality returns an empty list then
         # get_magnet_1337x() is called
         else:
@@ -140,7 +142,10 @@ def reply(update, context):
                     # Inline url is created for yts torrent links an not for
                     # 1337x since 1337x returns magnet links
                     # which cannot be used as an inline url in telegram.
-                    text += "[{}]({})\n".format(message[i], link)
+                    if(message[i] == "magnet"):
+                        text += f"{link}\n"
+                    else:
+                        text += "[{}]({})\n".format(message[i], link)
     except Exception as e:
         print(e)
         if results_len > 0 and query.isnumeric() and int(query) > results_len:

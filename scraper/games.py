@@ -1,6 +1,6 @@
 """fitgirlrepacks scraping functions."""
 
-# import re
+import re
 import requests
 from bs4 import BeautifulSoup
 
@@ -17,5 +17,29 @@ def search_games(chatid, search, obj):
         title = tag.text
         link = tag['href']
         obj.add(chatid, i + 1, title, link, None)
-    message = obj.build_message(chatid)
+    if results != []:
+        message = obj.build_message(chatid)
+    else:
+        message = "No results found."
     return message
+
+
+def get_games(chatid, choice, obj):
+    """Get download link."""
+    url = obj.get_url(chatid, int(choice))
+    headers = {"User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_4)\
+                AppleWebKit/537.36 (KHTML, like Gecko) Chrome/83.0.4103.97 \
+                Safari/537.36"}
+    response = requests.get(url, headers=headers)
+    soup = BeautifulSoup(response.content, 'html5lib')
+    content = soup.findAll('div', attrs={'class': 'entry-content'})[0]
+    download_links_block = content.find('li')
+    download_links = download_links_block.findAll('a')
+    href = []
+    message = []
+    for link in download_links:
+        text = link.text
+        link = link['href']
+        href.append(link)
+        message.append(text)
+    return href, message
