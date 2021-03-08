@@ -30,6 +30,7 @@ def start(update, context):
     message += "/subs - to search for *subtitles*.\n\n"
     message += "/books - to search for *books*.\n\n"
     message += "/lyrics - to search for *lyrics*.\n\n"
+    message += "/games - to search for *games*.\n\n"
     message += "For eg. /yts Rango"
     update.message.reply_text("Hi, I'm Rango.", parse_mode=ParseMode.MARKDOWN)
     context.bot.send_audio(chat_id=chat_id, audio=SONG)
@@ -153,7 +154,7 @@ def reply(update, context):
         elif command == "lyrics":
             text = "Lyrics not available!"
         else:
-            text = "Enter a valid query\n\nFor eg. /yts Joker"
+            text = "Enter a valid query\n\nFor eg. /yts Rambo"
 
     update.message.reply_text(text, parse_mode=ParseMode.MARKDOWN)
 
