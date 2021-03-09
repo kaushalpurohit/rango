@@ -4,6 +4,10 @@ import re
 import requests
 from bs4 import BeautifulSoup
 
+headers = {"User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_4)\
+                AppleWebKit/537.36 (KHTML, like Gecko) Chrome/83.0.4103.97 \
+                Safari/537.36"}
+
 
 def search_yts(name, chatid, obj):
     """Search from yts."""
@@ -16,7 +20,7 @@ def search_yts(name, chatid, obj):
         pass
 
     url = "https://ytsnew.com/?s=" + name
-    response = requests.get(url)
+    response = requests.get(url, headers=headers)
     soup = BeautifulSoup(response.content, 'html5lib')
     results = soup.findAll('a', attrs={'class': 'ml-mask'})
 
@@ -43,7 +47,7 @@ def get_quality_yts(choice, chatid, obj):
     message = []
 
     try:
-        response = requests.get(url)
+        response = requests.get(url, headers=headers)
         soup = BeautifulSoup(response.content, 'html5lib')
         results = soup.findAll('a',
                                attrs={'class': 'lnk-lnk',

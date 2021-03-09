@@ -4,12 +4,16 @@ import re
 import requests
 from bs4 import BeautifulSoup
 
+headers = {"User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_4)\
+                AppleWebKit/537.36 (KHTML, like Gecko) Chrome/83.0.4103.97 \
+                Safari/537.36"}
+
 
 def search_subs(search, chatid, obj):
     """Search subtitles."""
     obj.reset(chatid)
     url = "https://yts-subs.com/search/" + search
-    reponse = requests.get(url)
+    reponse = requests.get(url, headers=headers)
     soup = BeautifulSoup(reponse.content, 'html5lib')
     results = soup.findAll('div', attrs={'class': 'media-body'})
 
@@ -29,7 +33,7 @@ def get_subs(choice, chatid, obj):
     """Return subtitle download links."""
     url = "https://yts-subs.com" + obj.get_url(chatid, int(choice))
     try:
-        reponse = requests.get(url)
+        reponse = requests.get(url, headers=headers)
     except Exception as e:
         print(e)
         raise Exception("Invalid url")
