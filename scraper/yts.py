@@ -1,12 +1,11 @@
 """Webscraping functions."""
 
-import re
 import requests
-from bs4 import BeautifulSoup
 
 headers = {"User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_4)\
                 AppleWebKit/537.36 (KHTML, like Gecko) Chrome/83.0.4103.97 \
                 Safari/537.36"}
+
 
 def search_yts(name, chatid, obj):
     """Search from yts."""
@@ -43,7 +42,8 @@ def get_quality_yts(choice, chatid, obj):
             quality = result['quality']
             message.append(quality)
             magnet_link = f"magnet:?xt=urn:btih:{_hash}&dn={title}&tr="
-            magnet_link += "http://track.one:1234/announce&tr=udp://track.two:80"
+            magnet_link += "http://track.one:1234/announce&tr="
+            magnet_link += "udp://track.two:80"
             magnet.append(magnet_link)
 
     except Exception as e:
