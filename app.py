@@ -112,7 +112,7 @@ def reply(update, context):
     command = obj.get_command(chatid)
     try:
         if command == "yts":
-            href, message = get_quality_yts(int(query), chatid, obj)
+            href, message, magnet = get_quality_yts(int(query), chatid, obj)
         elif command == "subs":
             href, message = get_subs(int(query), chatid, obj)
         elif command == "books":
@@ -137,6 +137,12 @@ def reply(update, context):
                     text += "{}. {}\n\n".format(i + 1, link)
             elif command == "lyrics":
                 text = lyrics
+            elif command == "yts":
+                text = "You can download from the following links\n\n"
+                for i, link in enumerate(href):
+                    text += f"*Torrent file*:[{message[i]}]({link})\n"
+                    text += "*Magnet link*:\n\n"
+                    text += f"{magnet[i]}\n\n"
             else:
                 text = "You can download from the following links\n\n"
                 for i, link in enumerate(href):
