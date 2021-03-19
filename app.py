@@ -143,7 +143,7 @@ def reply(update, context):
                 for i, link in enumerate(href):
                     text = f"*Torrent file*:[{message[i]}]({link})\n"
                     update.message.reply_text(text, parse_mode=ParseMode.MARKDOWN)
-                    text = f"*Magnet link({message[i]})*:\n\n"
+                    text = f"*Magnet link({message[i]})*\n\n"
                     update.message.reply_text(text, parse_mode=ParseMode.MARKDOWN)
                     text = f"{magnet[i]}\n\n"
                     update.message.reply_text(text, parse_mode=ParseMode.MARKDOWN)
