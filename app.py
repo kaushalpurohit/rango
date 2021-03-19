@@ -139,10 +139,15 @@ def reply(update, context):
                 text = lyrics
             elif command == "yts":
                 text = "You can download from the following links\n\n"
+                update.message.reply_text(text, parse_mode=ParseMode.MARKDOWN)
                 for i, link in enumerate(href):
-                    text += f"*Torrent file*:[{message[i]}]({link})\n"
-                    text += "*Magnet link*:\n\n"
-                    text += f"{magnet[i]}\n\n"
+                    text = f"*Torrent file*:[{message[i]}]({link})\n"
+                    update.message.reply_text(text, parse_mode=ParseMode.MARKDOWN)
+                    text = f"*Magnet link({message[i]})*:\n\n"
+                    update.message.reply_text(text, parse_mode=ParseMode.MARKDOWN)
+                    text = f"{magnet[i]}\n\n"
+                    update.message.reply_text(text, parse_mode=ParseMode.MARKDOWN)
+                return
             else:
                 text = "You can download from the following links\n\n"
                 for i, link in enumerate(href):
