@@ -1,6 +1,7 @@
 """Scrape sanfoundry."""
 
 import requests
+import pdfkit
 from bs4 import BeautifulSoup
 
 headers = {"User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_4)\
@@ -30,3 +31,8 @@ if __name__ == '__main__':
     final_body = get_source(url, final_body)
     f = open("../files/test.html", "w")
     f.write(final_body)
+    options = {
+        'grayscale': 0,
+        'no background': 1
+    }
+    pdfkit.from_file('../files/test.html', '../files/final.pdf', options=options)
