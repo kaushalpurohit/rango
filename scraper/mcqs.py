@@ -2,7 +2,7 @@
 
 import requests
 import pdfkit
-from os import environ
+from os import environ, remove
 from dotenv import load_dotenv
 from bs4 import BeautifulSoup
 
@@ -29,25 +29,30 @@ def get_source(url, final_body):
     return final_body
 
 
-def generate_pdf(url):
+def generate_pdf(href):
     """Generate pdf file."""
     final_body = ""
+    url = "https://www.sanfoundry.com" + href
     final_body = get_source(url, final_body)
-    f = open("../files/test.html", "w")
+    f = open("files/test.html", "w")
     f.write(final_body)
     options = {
-        'grayscale': 0,
-        'no background': 1
+        "enable-local-file-access": None
     }
-    pdfkit.from_file('../files/test.html', '../files/final.pdf', options=options)
+    try:
+        pdfkit.from_file('files/test.html', 'files/final.pdf', options=options)
+    except OSError as e:
+        if 'Done' not in str(e):
+            raise e
     headers = {
         "Authorization": f"Bearer {FILEIO_KEY}"
     }
     data = {
-        "file": open("/home/kaushal/yts-tele-bot/files/final.pdf", 'rb')
+        "file": open("files/final.pdf", 'rb')
     }
     upload_url = "https://file.io/"
     response = requests.post(upload_url, files=data, headers=headers).json()
+    remove("../files/final.pdf")
     return response["link"]
 
 
@@ -58,10 +63,13 @@ if __name__ == '__main__':
     f = open("../files/test.html", "w")
     f.write(final_body)
     options = {
-        'grayscale': 0,
-        'no background': 1
+        "enable-local-file-access": None
     }
-    pdfkit.from_file('../files/test.html', '../files/final.pdf', options=options)
+    try:
+        pdfkit.from_file('../files/test.html', '../files/final.pdf', options=options)
+    except OSError as e:
+        if 'Done' not in str(e):
+            raise e
     headers = {
         "Authorization": f"Bearer {FILEIO_KEY}"
     }
@@ -71,3 +79,4 @@ if __name__ == '__main__':
     upload_url = "https://file.io/"
     response = requests.post(upload_url, files=data, headers=headers).json()
     print(response["link"])
+    remove("../files/final.pdf")

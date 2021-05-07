@@ -7,6 +7,7 @@ from dotenv import load_dotenv
 from scraper.links import links
 from scraper.yts import search_yts, get_quality_yts
 from scraper.x import search_1337x, get_magnet_1337x
+from scraper.mcqs import generate_pdf
 from scraper.games import search_games, get_games
 from scraper.subs import search_subs, get_subs
 from scraper.lyrics import search_lyrics, get_lyrics
@@ -45,6 +46,18 @@ def subs(update, context):
     message = re.findall("/subs (.*)", message)
     message = search_subs(message[0], chatid, obj)
     obj.command(chatid, "subs")
+    update.message.reply_text(message)
+
+
+def mcqs(update, content):
+    """Send mcqs pdf url."""
+    chatid = update.message.chat.id
+    message = update.message.text
+    obj.chatid(chatid)
+    url = re.findall("/mcqs (.*)", message)
+    update.message.reply_text("Please wait.")
+    message = generate_pdf(url[0])
+    obj.command(chatid, "mcqs")
     update.message.reply_text(message)
 
 
@@ -185,9 +198,10 @@ def main():
     dp.add_handler(CommandHandler('books', books))
     dp.add_handler(CommandHandler('lyrics', lyrics))
     dp.add_handler(CommandHandler('games', games))
+    dp.add_handler(CommandHandler('mcqs', mcqs))
     dp.add_handler(MessageHandler(Filters.text, reply))
     # By default timeout is 0.
-    updater.start_polling(timeout=120)
+    updater.start_polling(timeout=180)
     updater.idle()
 
 
