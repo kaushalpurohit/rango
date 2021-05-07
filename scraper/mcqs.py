@@ -34,13 +34,13 @@ def generate_pdf(href):
     final_body = ""
     url = "https://www.sanfoundry.com" + href
     final_body = get_source(url, final_body)
-    f = open("test.html", "w")
+    f = open("/tmp/test.html", "w")
     f.write(final_body)
     options = {
         "enable-local-file-access": None
     }
     try:
-        pdfkit.from_file('test.html', 'final.pdf', options=options)
+        pdfkit.from_file('/tmp/test.html', '/tmp/final.pdf', options=options)
     except OSError as e:
         if 'Done' not in str(e):
             raise e
@@ -48,7 +48,7 @@ def generate_pdf(href):
         "Authorization": f"Bearer {FILEIO_KEY}"
     }
     data = {
-        "file": open("final.pdf", 'rb')
+        "file": open("/tmp/final.pdf", 'rb')
     }
     upload_url = "https://file.io/"
     response = requests.post(upload_url, files=data, headers=headers).json()
