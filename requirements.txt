@@ -55,5 +55,6 @@ tzlocal==2.1
 urllib3==1.26.3
 w3lib==1.22.0
 webencodings==0.5.1
+wkhtmltopdf==0.2
 wrapt==1.12.1
 zope.interface==5.4.0
