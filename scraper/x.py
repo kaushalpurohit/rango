@@ -12,7 +12,7 @@ headers = {"User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_4)\
 def search_1337x(search, chatid, obj):
     """Search from 1337x."""
     obj.reset(chatid)
-    url = f'https://www.1377x.to/search/{search}/1'
+    url = f'https://1337x.to/srch?search={search}'
     response = requests.get(url, headers=headers)
     soup = BeautifulSoup(response.content, 'html5lib')
     href = soup.findAll('a', attrs={'href': re.compile('/torrent/(.*)')})
