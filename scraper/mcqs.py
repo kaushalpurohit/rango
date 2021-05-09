@@ -52,7 +52,6 @@ def generate_pdf(href):
     }
     upload_url = "https://file.io/"
     response = requests.post(upload_url, files=data, headers=headers).json()
-    remove("final.pdf")
     return response["link"]
 
 
