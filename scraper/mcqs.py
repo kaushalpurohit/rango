@@ -3,6 +3,7 @@
 import requests
 import pdfkit
 from os import environ, remove
+import datetime
 from dotenv import load_dotenv
 from bs4 import BeautifulSoup
 
@@ -34,48 +35,21 @@ def generate_pdf(href):
     final_body = ""
     url = "https://www.sanfoundry.com" + href
     final_body = get_source(url, final_body)
-    f = open("/app/final.html", "w")
-    f.write(final_body)
     options = {
         "enable-local-file-access": None
     }
     try:
-        pdfkit.from_file('/app/final.html', '/app/final.pdf', options=options)
+        content = pdfkit.from_string(final_body, False, options=options)
     except OSError as e:
         if 'Done' not in str(e):
             raise e
     headers = {
-        "Authorization": f"Bearer {FILEIO_KEY}"
+        "Authorization": f"Bearer {FILEIO_KEY}",
+        "expires": str(datetime.datetime.now() + datetime.timedelta(days=1))
     }
     data = {
-        "file": open("/app/final.pdf", 'rb')
+        "file": ("final.pdf", content, "application/pdf")
     }
     upload_url = "https://file.io/"
     response = requests.post(upload_url, files=data, headers=headers).json()
     return response["link"]
-
-
-if __name__ == '__main__':
-    url = "https://www.sanfoundry.com/embedded-systems-questions-answers-processor-embedded-system/"
-    final_body = ""
-    final_body = get_source(url, final_body)
-    f = open("../files/test.html", "w")
-    f.write(final_body)
-    options = {
-        "enable-local-file-access": None
-    }
-    try:
-        pdfkit.from_file('../files/test.html', '../files/final.pdf', options=options)
-    except OSError as e:
-        if 'Done' not in str(e):
-            raise e
-    headers = {
-        "Authorization": f"Bearer {FILEIO_KEY}"
-    }
-    data = {
-        "file": open("/home/kaushal/yts-tele-bot/files/final.pdf", 'rb')
-    }
-    upload_url = "https://file.io/"
-    response = requests.post(upload_url, files=data, headers=headers).json()
-    print(response["link"])
-    remove("../files/final.pdf")
