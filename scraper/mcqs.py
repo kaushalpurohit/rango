@@ -2,7 +2,7 @@
 
 import requests
 import pdfkit
-from os import environ, remove
+from os import environ
 import datetime
 from dotenv import load_dotenv
 from bs4 import BeautifulSoup
