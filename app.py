@@ -134,8 +134,6 @@ def reply(update, context):
             href, lyrics = get_lyrics(chatid, int(query), obj)
         elif command == "games":
             href, message = get_games(chatid, int(query), obj)
-        # If the function quality returns an empty list then
-        # get_magnet_1337x() is called
         else:
             href = get_magnet_1337x(int(query), chatid, obj)
         # If the function returns an empty list it means no link is found.
@@ -151,18 +149,7 @@ def reply(update, context):
             elif command == "lyrics":
                 text = lyrics
             elif command == "yts":
-                text = "You can download from the following links\n\n"
-                update.message.reply_text(text, parse_mode=ParseMode.MARKDOWN)
-                for i, link in enumerate(href):
-                    text = f"*Torrent file*:[{message[i]}]({link})\n"
-                    update.message.reply_text(text,
-                                              parse_mode=ParseMode.MARKDOWN)
-                    text = f"*Magnet link({message[i]})*\n\n"
-                    update.message.reply_text(text,
-                                              parse_mode=ParseMode.MARKDOWN)
-                    text = f"{magnet[i]}\n\n"
-                    update.message.reply_text(text,
-                                              parse_mode=ParseMode.MARKDOWN)
+                yts_reply(href, update, message, magnet)
                 return
             else:
                 text = "You can download from the following links\n\n"
@@ -185,6 +172,19 @@ def reply(update, context):
 
     update.message.reply_text(text, parse_mode=ParseMode.MARKDOWN)
 
+def yts_reply(href, update, message, magnet):
+    text = "You can download from the following links\n\n"
+    update.message.reply_text(text, parse_mode=ParseMode.MARKDOWN)
+    for i, link in enumerate(href):
+        text = f"*Torrent file*:[{message[i]}]({link})\n"
+        update.message.reply_text(text,
+                                    parse_mode=ParseMode.MARKDOWN)
+        text = f"*Magnet link({message[i]})*\n\n"
+        update.message.reply_text(text,
+                                    parse_mode=ParseMode.MARKDOWN)
+        text = f"{magnet[i]}\n\n"
+        update.message.reply_text(text,
+                                    parse_mode=ParseMode.MARKDOWN)
 
 def main():
     """Initiate bot."""
