@@ -218,6 +218,7 @@ def main():
     dp.add_handler(CommandHandler('lyrics', lyrics))
     dp.add_handler(CommandHandler('games', games))
     dp.add_handler(CommandHandler('mcqs', mcqs))
+    dp.add_handler(CommandHandler('youtube', youtube))
     dp.add_handler(MessageHandler(Filters.text, reply))
     # By default timeout is 0.
     updater.start_polling(timeout=180)
