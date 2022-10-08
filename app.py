@@ -175,7 +175,7 @@ def reply(update, context):
     update.message.reply_text(text, parse_mode=ParseMode.MARKDOWN)
 
 
-def youtube():
+def youtube(update, context):
     """Send link of audio file of the youtube video."""
     chatid = update.message.chat.id
     message = update.message.text
