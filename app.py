@@ -186,7 +186,7 @@ def youtube():
     }
     with youtube_dl.YoutubeDL(ydl_opts) as ydl:
         info = ydl.extract_info(
-            'a', download=False)
+            message[0], download=False)
     message = info['formats'][0]['url']
     update.message.reply_text(message, parse_mode=ParseMode.MARKDOWN)
 
