@@ -1,9 +1,11 @@
 """Telegram bot to get torrent based on the user's query from yts and 1337x."""
 
+from __future__ import unicode_literals
 import re
 from os import environ
 from telegram import ParseMode
-from dotenv import load_dotenv
+from dotenv import load_dotenv 
+import youtube_dl
 from scraper.links import links
 from scraper.yts import search_yts, get_quality_yts
 from scraper.x import search_1337x, get_magnet_1337x
@@ -171,6 +173,23 @@ def reply(update, context):
             text = "Enter a valid query\n\nFor eg. /yts Rambo"
 
     update.message.reply_text(text, parse_mode=ParseMode.MARKDOWN)
+
+
+def youtube():
+    """Send link of audio file of the youtube video."""
+    chatid = update.message.chat.id
+    message = update.message.text
+    obj.chatid(chatid)
+    message = re.findall("/youtube (.*)", message)
+    ydl_opts = {
+        'format': 'bestaudio',
+    }
+    with youtube_dl.YoutubeDL(ydl_opts) as ydl:
+        info = ydl.extract_info(
+            'a', download=False)
+    message = info['formats'][0]['url']
+    update.message.reply_text(message, parse_mode=ParseMode.MARKDOWN)
+
 
 def yts_reply(href, update, message, magnet):
     text = "You can download from the following links\n\n"
