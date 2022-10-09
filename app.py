@@ -124,7 +124,10 @@ def reply(update, context):
     chatid = update.message.chat.id
     results_len = obj.get_len(chatid)
     message = ""
-    command = obj.get_command(chatid)
+    try:
+        command = obj.get_command(chatid)
+    except KeyError:
+        text = "Enter a valid query\n\nFor eg. /yts Rambo"
     try:
         if command == "yts":
             href, message, magnet = get_quality_yts(int(query), chatid, obj)
