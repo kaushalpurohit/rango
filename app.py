@@ -179,7 +179,6 @@ def youtube(update, context):
     """Send link of audio file of the youtube video."""
     chatid = update.message.chat.id
     message = update.message.text
-    obj.chatid(chatid)
     message = re.findall("/youtube (.*)", message)
     ydl_opts = {
         'format': 'bestaudio',
@@ -187,7 +186,7 @@ def youtube(update, context):
     with youtube_dl.YoutubeDL(ydl_opts) as ydl:
         info = ydl.extract_info(
             message[0], download=False)
-    message = info['formats'][0]['url']
+    message = f"[Result]({info['formats'][0]['url']})"
     update.message.reply_text(message, parse_mode=ParseMode.MARKDOWN)
 
 
