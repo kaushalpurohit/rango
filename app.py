@@ -190,7 +190,7 @@ def youtube(update, context):
     with youtube_dl.YoutubeDL(ydl_opts) as ydl:
         info = ydl.extract_info(
             message, download=False)
-    message = f"You can download the song from [here]({info['formats'][0]['url']})"
+    message = f"You can download the audio from [here]({info['formats'][0]['url']})"
     update.message.reply_text(message, parse_mode=ParseMode.MARKDOWN)
 
 
