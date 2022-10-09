@@ -183,10 +183,14 @@ def youtube(update, context):
     ydl_opts = {
         'format': 'bestaudio',
     }
+    if message[0].find('watch?v='):
+        message = message[0].split('=')[-1]
+    else:
+        message = message[0].split('/')[-1]
     with youtube_dl.YoutubeDL(ydl_opts) as ydl:
         info = ydl.extract_info(
-            message[0], download=False)
-    message = f"[Result]({info['formats'][0]['url']})"
+            message, download=False)
+    message = f"You can download the song from [here]({info['formats'][0]['url']})"
     update.message.reply_text(message, parse_mode=ParseMode.MARKDOWN)
 
 
