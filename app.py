@@ -1,9 +1,11 @@
 """Telegram bot to get torrent based on the user's query from yts and 1337x."""
 
+from __future__ import unicode_literals
 import re
 from os import environ
 from telegram import ParseMode
-from dotenv import load_dotenv
+from dotenv import load_dotenv 
+import youtube_dl
 from scraper.links import links
 from scraper.yts import search_yts, get_quality_yts
 from scraper.x import search_1337x, get_magnet_1337x
@@ -122,7 +124,10 @@ def reply(update, context):
     chatid = update.message.chat.id
     results_len = obj.get_len(chatid)
     message = ""
-    command = obj.get_command(chatid)
+    try:
+        command = obj.get_command(chatid)
+    except KeyError:
+        text = "Enter a valid query\n\nFor eg. /yts Rambo"
     try:
         if command == "yts":
             href, message, magnet = get_quality_yts(int(query), chatid, obj)
@@ -172,6 +177,26 @@ def reply(update, context):
 
     update.message.reply_text(text, parse_mode=ParseMode.MARKDOWN)
 
+
+def youtube(update, context):
+    """Send link of audio file of the youtube video."""
+    chatid = update.message.chat.id
+    message = update.message.text
+    message = re.findall("/youtube (.*)", message)
+    ydl_opts = {
+        'format': 'bestaudio',
+    }
+    if message[0].find('watch?v='):
+        message = message[0].split('=')[-1]
+    else:
+        message = message[0].split('/')[-1]
+    with youtube_dl.YoutubeDL(ydl_opts) as ydl:
+        info = ydl.extract_info(
+            message, download=False)
+    message = f"You can download the audio from [here]({info['formats'][0]['url']})"
+    update.message.reply_text(message, parse_mode=ParseMode.MARKDOWN)
+
+
 def yts_reply(href, update, message, magnet):
     text = "You can download from the following links\n\n"
     update.message.reply_text(text, parse_mode=ParseMode.MARKDOWN)
@@ -199,6 +224,7 @@ def main():
     dp.add_handler(CommandHandler('lyrics', lyrics))
     dp.add_handler(CommandHandler('games', games))
     dp.add_handler(CommandHandler('mcqs', mcqs))
+    dp.add_handler(CommandHandler('youtube', youtube))
     dp.add_handler(MessageHandler(Filters.text, reply))
     # By default timeout is 0.
     updater.start_polling(timeout=180)
